@@ -33,7 +33,7 @@ describe("BibaCoin", function () {
     describe("Friends", function() {
         it("Should emit change", async function() {
             await expect(bibaCoin.setFriend(addr2.address, sampleFriend))
-                .to.emit(bibaCoin, "FriendChanged")
+                .to.emit(bibaCoin, "friendChanged")
                 .withArgs(addr2.address);
         });
 

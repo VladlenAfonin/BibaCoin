@@ -12,20 +12,20 @@ contract BibaCoin is ERC20 {
         int32 age;
     }
 
-    mapping (address => Friend) private _friends;
+    mapping (address => Friend) private friends;
 
-    event FriendChanged(address addr);
+    event friendChanged(address addr);
 
     constructor(uint256 initialSupply) ERC20("BibaCoin", "BBC") {
         _mint(msg.sender, initialSupply);
     }
 
     function setFriend(address addr, Friend memory value) external {
-        _friends[addr] = value;
-        emit FriendChanged(addr);
+        friends[addr] = value;
+        emit friendChanged(addr);
     }
 
     function getFriend(address addr) external view returns (Friend memory) {
-        return _friends[addr];
+        return friends[addr];
     }
 }
