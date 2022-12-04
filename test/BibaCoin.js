@@ -1,6 +1,7 @@
 const {expect} = require("chai");
+const {BigNumber} = require("ethers");
 
-describe("BibaCoin contract", function () {
+describe("BibaCoin", function () {
     let totalSupply = '10000000000000000000000';
     let token;
     let hardhatToken;
@@ -9,21 +10,43 @@ describe("BibaCoin contract", function () {
     let addr2;
     let addrs;
 
-    beforeEach(async function () {
+    beforeEach(async function() {
         token = await ethers.getContractFactory("BibaCoin");
+
         [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 
         hardhatToken = await token.deploy(totalSupply);
     });
 
-    describe("Deployment", function () {
+    describe("Friends", function() {
+        it("Should set mapping value", async function() {
+            await hardhatToken.setFriend(addr1.address, {
+                addr: addr2.address,
+                isMarried: true,
+                salary: BigNumber.from(100),
+                age: 100000,
+            });
+
+            let x = await hardhatToken.getFriend(addr1.address);
+
+            expect(x.addr).to.equal(addr2.address)
+        });
+
+        it("Should get mapping value", async function() {
+            let biba = await hardhatToken.getFriend(owner.address);
+
+            // I don't know what to expect :(
+        });
+    });
+
+    describe("Deployment", function() {
         it("Should assign the total supply of coins to the owner", async function () {
             const ownerBalance = await hardhatToken.balanceOf(owner.address);
             expect(await hardhatToken.totalSupply()).to.equal(ownerBalance);
         });
     });
 
-    describe("Transactions", function () {
+    describe("Transactions", function() {
         it("Should transfer coins between accounts", async function () {
             // Transfer 50 coins from owner to addr1
             await hardhatToken.transfer(addr1.address, 50);
@@ -37,7 +60,7 @@ describe("BibaCoin contract", function () {
             expect(addr2Balance).to.equal(50);
         });
 
-        it("Should fail if sender doesn’t have enough coins", async function () {
+        it("Should fail if sender doesn’t have enough coins", async function() {
             const initialOwnerBalance = await hardhatToken.balanceOf(owner.address);
 
             // Try to send 1 coin from addr1 (0 coins) to owner (1000000 coins).
